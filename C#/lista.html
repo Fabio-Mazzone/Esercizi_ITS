@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        <h1>Lista componenti</h1>
+
+        Nome Oggetto: <input type="text" id="input-oggetto" />
+        <button type="button" onclick="salvataggio()">Salva</button>
+        <ul id="lista-elementi">
+
+        </ul>
+
+        <script>    
+            function salvataggio() {
+                  var ogg = document.getElementById("input-oggetto").value;
+                  console.log(ogg)
+
+                  document.getElementById("lista-elementi").innerHTML = "<li>" + ogg + "</li>";
+            }
+        </script>
+</body>
+
+</html>

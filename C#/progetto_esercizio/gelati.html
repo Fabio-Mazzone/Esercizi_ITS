@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Gelateria Artigianale</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff9ec3;
+            --secondary-color: #b3e5fc;
+            --accent-color: #ffcc80;
+            --dark-color: #5c3a21;
+            --light-color: #fff5f8;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: var(--dark-color);
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+            .btn-primary:hover {
+                background-color: #ff7bac;
+                border-color: #ff7bac;
+            }
+
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+            .btn-success:hover {
+                background-color: #81d4fa;
+                border-color: #81d4fa;
+                color: var(--dark-color);
+            }
+
+        .gelato-item {
+            border-left: 5px solid var(--primary-color);
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+        }
+
+        .stats-box {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: var(--dark-color);
+        }
+
+        .ice-cream-icon {
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+
+        .page-title {
+            color: var(--dark-color);
+            font-weight: bold;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-ice-cream fa-2x"></i>
+                <span class="ms-2 fw-bold">Gelateria Artigianale</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-home"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#addGelatoModal">
+                            <i class="fas fa-plus"></i> Nuovo Gusto
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="page-title">
+            <i class="fas fa-list ice-cream-icon"></i>Gestione Magazzino Gelati
+        </h2>
+
+        <!-- Statistiche -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-box">
+                    <div class="stats-number" id="total-gelati">0</div>
+                    <div class="stats-label">Gusti Totali</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-box">
+                    <div class="stats-number" id="total-disponibili">0</div>
+                    <div class="stats-label">Vaschette Disponibili</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-box">
+                    <div class="stats-number" id="total-venduti">0</div>
+                    <div class="stats-label">Vaschette Vendute</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-box">
+                    <div class="stats-number" id="total-prodotti">0</div>
+                    <div class="stats-label">Vaschette Prodotte</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista Gelati -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list-ul"></i> Elenco Gusti di Gelato</h5>
+                <button class="btn btn-sm btn-light" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> Aggiorna
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="gelati-list" class="row">
+                    <!-- I gelati verranno caricati qui dinamicamente -->
+                    <div class="col-12 text-center">
+                        <div class="spinner-border text-primary my-5" role="status">
+                            <span class="visually-hidden">Caricamento...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Aggiungi Gelato -->
+    <div class="modal fade" id="addGelatoModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-plus"></i> Aggiungi Nuovo Gusto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addGelatoForm">
+                        <div class="mb-3">
+                            <label for="gusto" class="form-label">Gusto</label>
+                            <input type="text" class="form-control" id="gusto" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="disponibile" class="form-label">Quantità Disponibile</label>
+                                <input type="number" class="form-control" id="disponibile" min="0" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="prodotto" class="form-label">Quantità Prodotta</label>
+                                <input type="number" class="form-control" id="prodotto" min="0" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="acquistato" class="form-label">Quantità Acquistata</label>
+                                <input type="number" class="form-control" id="acquistato" min="0" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="prezzo" class="form-label">Prezzo al Kg</label>
+                                <input type="number" step="0.01" class="form-control" id="prezzo" min="0" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary" id="saveGelatoBtn">Salva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Dettagli Gelato -->
+    <div class="modal fade" id="detailsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-info-circle"></i> Dettagli Gusto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Gusto:</strong> <span id="detail-gusto"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Codice:</strong> <span id="detail-codice"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="stats-box">
+                                <div class="stats-number" id="detail-disponibile">0</div>
+                                <div class="stats-label">Disponibili</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-box">
+                                <div class="stats-number" id="detail-prodotto">0</div>
+                                <div class="stats-label">Prodotti</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-box">
+                                <div class="stats-number" id="detail-acquistato">0</div>
+                                <div class="stats-label">Acquistati</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <strong>Prezzo al Kg:</strong> �<span id="detail-prezzo"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // URL base dell'API - modifica se necessario
+        const API_BASE_URL = 'https://localhost:7008';
+
+        // Elementi DOM
+        const gelatiList = document.getElementById('gelati-list');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const saveGelatoBtn = document.getElementById('saveGelatoBtn');
+
+        // Statistiche
+        const totalGelati = document.getElementById('total-gelati');
+        const totalDisponibili = document.getElementById('total-disponibili');
+        const totalVenduti = document.getElementById('total-venduti');
+        const totalProdotti = document.getElementById('total-prodotti');
+
+        // Funzione per caricare i gelati
+        async function loadGelati() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/gelati`);
+                if (!response.ok) {
+                    throw new Error('Errore nel caricamento dei gelati');
+                }
+
+                const gelati = await response.json();
+                displayGelati(gelati);
+                updateStats(gelati);
+            } catch (error) {
+                gelatiList.innerHTML = `
+                        <div class="col-12 text-center text-danger">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                            <p>Errore nel caricamento dei dati: ${error.message}</p>
+                        </div>
+                    `;
+                console.error('Errore:', error);
+            }
+        }
+
+        // Funzione per visualizzare i gelati
+        function displayGelati(gelati) {
+            if (gelati.length === 0) {
+                gelatiList.innerHTML = `
+                        <div class="col-12 text-center">
+                            <i class="fas fa-ice-cream fa-3x mb-3" style="color: #ccc;"></i>
+                            <p>Nessun gelato disponibile. Aggiungi il primo gusto!</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            let html = '';
+            gelati.forEach(gelato => {
+                html += `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="gelato-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="mb-1">${gelato.gusto}</h5>
+                                    <span class="badge bg-primary">�${gelato.prezzo.toFixed(2)}/kg</span>
+                                </div>
+                                <p class="mb-1 small text-muted">Codice: ${gelato.codice || gelato.id}</p>
+                                <div class="row mt-2">
+                                    <div class="col-4">
+                                        <small class="text-success"><strong>Disponibili:</strong> ${gelato.disponibile}</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-info"><strong>Prodotti:</strong> ${gelato.prodotto}</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-danger"><strong>Venduti:</strong> ${gelato.acquistato}</small>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-outline-primary details-btn" data-id="${gelato.codice || gelato.id}">
+                                        <i class="fas fa-info-circle"></i> Dettagli
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            });
+
+            gelatiList.innerHTML = html;
+
+            // Aggiungi event listener per i pulsanti dei dettagli
+            document.querySelectorAll('.details-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const codice = btn.getAttribute('data-id');
+                    showGelatoDetails(codice);
+                });
+            });
+        }
+
+        // Funzione per aggiornare le statistiche
+        function updateStats(gelati) {
+            totalGelati.textContent = gelati.length;
+
+            const totaleDisponibili = gelati.reduce((sum, gelato) => sum + gelato.disponibile, 0);
+            const totaleVenduti = gelati.reduce((sum, gelato) => sum + gelato.acquistato, 0);
+            const totaleProdotti = gelati.reduce((sum, gelato) => sum + gelato.prodotto, 0);
+
+            totalDisponibili.textContent = totaleDisponibili;
+            totalVenduti.textContent = totaleVenduti;
+            totalProdotti.textContent = totaleProdotti;
+        }
+
+        // Funzione per mostrare i dettagli di un gelato
+        async function showGelatoDetails(codice) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/gelati/${codice}`);
+                if (!response.ok) {
+                    throw new Error('Gelato non trovato');
+                }
+
+                const gelato = await response.json();
+
+                // Popola il modal con i dettagli
+                document.getElementById('detail-gusto').textContent = gelato.gusto;
+                document.getElementById('detail-codice').textContent = gelato.codice || gelato.id;
+                document.getElementById('detail-disponibile').textContent = gelato.disponibile;
+                document.getElementById('detail-prodotto').textContent = gelato.prodotto;
+                document.getElementById('detail-acquistato').textContent = gelato.acquistato;
+                document.getElementById('detail-prezzo').textContent = gelato.prezzo.toFixed(2);
+
+                // Mostra il modal
+                const detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+                detailsModal.show();
+            } catch (error) {
+                alert('Errore nel caricamento dei dettagli: ' + error.message);
+                console.error('Errore:', error);
+            }
+        }
+
+        // Funzione per aggiungere un nuovo gelato
+        async function addGelato() {
+            const gusto = document.getElementById('gusto').value;
+            const disponibile = parseInt(document.getElementById('disponibile').value);
+            const prodotto = parseInt(document.getElementById('prodotto').value);
+            const acquistato = parseInt(document.getElementById('acquistato').value);
+            const prezzo = parseFloat(document.getElementById('prezzo').value);
+
+            if (!gusto || isNaN(disponibile) || isNaN(prodotto) || isNaN(acquistato) || isNaN(prezzo)) {
+                alert('Per favore, compila tutti i campi correttamente.');
+                return;
+            }
+
+            const newGelato = {
+                gusto: gusto,
+                disponibile: disponibile,
+                prodotto: prodotto,
+                acquistato: acquistato,
+                prezzo: prezzo
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/gelati`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newGelato)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Errore nell\'aggiunta del gelato');
+                }
+
+                // Chiudi il modal e resetta il form
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addGelatoModal'));
+                modal.hide();
+                document.getElementById('addGelatoForm').reset();
+
+                // Ricarica la lista
+                loadGelati();
+
+                alert('Gelato aggiunto con successo!');
+            } catch (error) {
+                alert('Errore nell\'aggiunta del gelato: ' + error.message);
+                console.error('Errore:', error);
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', loadGelati);
+        refreshBtn.addEventListener('click', loadGelati);
+        saveGelatoBtn.addEventListener('click', addGelato);
+    </script>
+</body>
+</html>
