@@ -1,0 +1,34 @@
+<form (ngSubmit)="salva()">
+ 
+  <div class="form-group">
+    <label for="input-nome">Nome:</label>
+    <input type="text" class="form-control" [(ngModel)]="nom" name="nome" id="input-nome">
+  </div>
+
+
+  <div class="form-group">
+    <label for="input-specie">Specie:</label>
+    <input type="text" class="form-control" [(ngModel)]="spec" name="specie" id="input-specie">
+  </div>
+
+ 
+  <div class="form-group">
+    <label for="input-peso">Peso (kg):</label>
+    <input type="number" class="form-control" [(ngModel)]="pes" name="peso" id="input-peso">
+  </div>
+
+  
+  <div class="form-group">
+    <label for="input-peli">
+      <input type="checkbox" [(ngModel)]="pel" name="peli" id="input-peli">
+      Ha i peli?
+    </label>
+  </div>
+
+  <div class="form-group">
+    <label for="input-provenienza">Provenienza:</label>
+    <input type="text" class="form-control" [(ngModel)]="prov" name="provenienza" id="input-provenienza">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Salva Animale</button>
+</form>
